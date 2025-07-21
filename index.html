@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Managemnet</title>
+  <style>
+    :root {
+      --pale-mint: #FAF6E9;
+      --cream: #73946B;
+      --dark-gray: #5e8c6170  ;
+      --charcoal: #5e8c6119;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'RL_DroidKufi', 'LeJeuneDeck-Regular', 'Times New Roman', Times, serif;
+    }
+    
+    body {
+      background-color: var(--pale-mint);
+      color: var(--cream);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      perspective: 1000px;
+    }
+    
+    .container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+    
+    .content {
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      padding: 2rem;
+      max-width: 800px;
+    }
+    
+    h1 {
+      font-size: 3.0rem;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--cream);
+      text-shadow: 0 0 15px rgba(13, 62, 23, 0.264);
+    }
+    
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      color: var(--cream);
+      opacity: 0.8;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 0.8rem 2rem;
+      background-color: var(--charcoal);
+      color: var(--cream);
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: bold;
+      border: 2px solid var(--cream);
+      box-shadow: 0 5px 15px rgba(10, 13, 9, 0.2);
+      transition: all 0.3s ease;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      background-color: var(--dark-gray);
+    }
+    
+    .globe {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -40%);
+      z-index: 1;
+      
+    }
+    
+    .globe-sphere {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #5E8C61;
+      box-shadow: #0a0d0a;
+      animation: rotate 25s linear infinite;
+    }
+    
+    .globe-equator {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #5E8C61;
+      transform: rotateX(90deg);
+    }
+    
+    .globe-meridian {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #5E8C61;
+      transform: rotateY(90deg);
+      animation: rotate 20s linear infinite;
+    }
+    
+    .globe-meridian-2 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #5E8C61;
+      transform: rotateY(45deg);
+      animation: rotate 15s linear infinite;
+    }
+    
+    .globe-meridian-3 {
+      position: absolute;
+      top:50%;
+      left:50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #5E8C61;
+      transform: rotateY(-45deg);
+      animation: rotate 5s linear infinite;
+    }
+    
+    .points {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px solid rgba(233, 229, 214, 0.3);
+      border-radius: 50%;
+    }
+    
+    .point {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background-color: var(--cream);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--cream);
+    }
+    
+    @keyframes rotate {
+      0% {
+        transform: translate(-50%, -50%) rotateY(0) rotateX(15deg);
+      }
+      100% {
+        transform: translate(-50%, -50%) rotateY(360deg) rotateX(15deg);
+      }
+    }
+    
+    .bg-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .bg-element {
+      position: absolute;
+      background-color: var(--charcoal);
+      border-radius: 50%;
+      opacity: 0.2;
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background-color: rgba(250, 246, 233, 0.1);
+    }
+    
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--cream);
+      letter-spacing: 2px;
+    }
+    
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-item {
+      color: var(--cream);
+      text-decoration: none;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-item:hover {
+      color: #5E8C61;
+      transform: translateY(-2px);
+    }
+    
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--cream);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-item:hover::after {
+      width: 100%;
+    }
+    
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      fill: var(--cream);
+    }
+    
+    .nav-icon:hover {
+      transform: scale(1.1);
+      fill: #5E8C61;
+    }
+    
+    .search-icon {
+      stroke: var(--cream);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    .search-icon:hover {
+      stroke: #5E8C61;
+    }
+    
+    .user-icon {
+      stroke: var(--cream);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    .user-icon:hover {
+      stroke: #5E8C61;
+    }
+
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <div class="logo">xyz</div>
+      <ul class="nav-menu">
+        <li><a href="shoes.html" class="nav-item">Shoes</a></li>
+        <li><a href="bags.html" class="nav-item">Bags</a></li>
+        <li><a href="watches.html" class="nav-item">Watches</a></li>
+        <li><a href="shirts.html" class="nav-item">Shirts</a></li>
+        <li><a href="products.html" class="nav-item">Discover</li>
+      </ul>
+    </div>
+    
+    <div class="nav-right">
+      <!-- Search Icon -->
+      <svg class="nav-icon search-icon" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      
+      <!-- Sign In Icon -->
+      <svg class="nav-icon user-icon" viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="content">
+      <h1>xyz</h1>
+      <p>Jump right in! start adding your products now.</p>
+      <a href="form.html" class="btn">Get Started</a>
+    </div>
+    
+    <div class="globe">
+      <div class="globe-sphere"></div>
+      <div class="globe-equator"></div>
+      <div class="globe-meridian"></div>
+      <div class="globe-meridian-2"></div>
+      <div class="globe-meridian-3"></div>
+      <div class="points" id="points"></div>
+    </div>
+  </div>
+  
+  <div class="bg-elements" id="bg-elements"></div>
+  
+  <script>
+    // Create random points on the globe
+    const pointsContainer = document.getElementById('points');
+    const numPoints = 100;
+    
+    for (let i = 0; i < numPoints; i++) {
+      const point = document.createElement('div');
+      point.className = 'point';
+      
+      // Random spherical coordinates
+      const theta = Math.random() * Math.PI * 2; // longitude
+      const phi = Math.acos(2 * Math.random() - 1); // latitude
+      const radius = 250; // sphere radius
+      
+      // Convert to Cartesian coordinates
+      const x = radius * Math.sin(phi) * Math.cos(theta);
+      const y = radius * Math.sin(phi) * Math.sin(theta);
+      const z = radius * Math.cos(phi);
+      
+      // Position the point
+      point.style.left = '50%';
+      point.style.marginLeft = x + 'px';
+      point.style.top = '50%';
+      point.style.marginTop = y + 'px';
+      // Use simple transform instead of translateZ
+      point.style.transform = 'scale(' + (z/radius/2 + 0.5) + ')';
+      
+      // Random size and opacity
+      const size = Math.random() * 3 + 1;
+      const opacity = Math.random() * 0.7 + 0.3;
+      
+      point.style.width = size + 'px';
+      point.style.height = size + 'px';
+      point.style.opacity = opacity.toString();
+      
+      pointsContainer.appendChild(point);
+    }
+  </script>
+</body>
+</html>

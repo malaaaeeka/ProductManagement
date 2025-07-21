@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Product - Product Management</title>
+  <style>
+    :root {
+      --pale-mint: #FAF6E9;
+      --cream: #73946B;
+      --dark-gray: #5e8c6170;
+      --charcoal: #5e8c6119;
+      --success: #4CAF50;
+      --error: #f44336;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'RL_DroidKufi', 'LeJeuneDeck-Regular', 'Times New Roman', Times, serif;
+    }
+    
+    body {
+      background-color: var(--pale-mint);
+      color: var(--cream);
+      min-height: 100vh;
+      line-height: 1.4;
+      padding: 1rem;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+    
+    .form-section {
+      background-color: rgba(94, 140, 97, 0.05);
+      padding: 1.5rem;
+      border-radius: 15px;
+      border: 2px solid var(--charcoal);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(10px);
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-header h2 {
+      font-size: 1.5rem;
+      color: var(--cream);
+      margin-bottom: 0.3rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .form-header p {
+      color: var(--cream);
+      opacity: 0.7;
+      font-size: 0.9rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--cream);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.8rem;
+      border: 2px solid var(--charcoal);
+      border-radius: 8px;
+      background-color: rgba(250, 246, 233, 0.9);
+      color: var(--cream);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--cream);
+      box-shadow: 0 0 0 3px rgba(115, 148, 107, 0.1);
+    }
+    
+    .form-group textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+    
+    /* Image Upload Styles */
+    .image-upload-wrapper {
+      position: relative;
+      border: 2px dashed var(--charcoal);
+      border-radius: 8px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background-color: rgba(250, 246, 233, 0.5);
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .image-upload-wrapper:hover {
+      border-color: var(--cream);
+      background-color: rgba(250, 246, 233, 0.8);
+    }
+    
+    .image-upload-wrapper.has-image {
+      border-style: solid;
+      border-color: var(--cream);
+      padding: 0.5rem;
+    }
+    
+    .image-upload-input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+    
+    .image-upload-content {
+      pointer-events: none;
+    }
+    
+    .image-upload-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .image-upload-text {
+      color: var(--cream);
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+    
+    .image-upload-subtext {
+      color: var(--cream);
+      font-size: 0.8rem;
+      opacity: 0.7;
+    }
+    
+    .image-preview {
+      max-width: 100%;
+      max-height: 150px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    
+    .image-remove-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      background-color: var(--error);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 25px;
+      height: 25px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .image-remove-btn:hover {
+      background-color: #d32f2f;
+      transform: scale(1.1);
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    
+    .btn {
+      flex: 1;
+      padding: 0.8rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary {
+      background-color: var(--cream);
+      color: var(--pale-mint);
+      border: 2px solid var(--cream);
+    }
+    
+    .btn-primary:hover {
+      background-color: transparent;
+      color: var(--cream);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
+    
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--cream);
+      border: 2px solid var(--cream);
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--cream);
+      color: var(--pale-mint);
+      transform: translateY(-2px);
+    }
+    
+    .success-message,
+    .error-message {
+      padding: 0.8rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      display: none;
+      animation: slideIn 0.3s ease;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    
+    .success-message {
+      background-color: var(--success);
+      color: white;
+    }
+    
+    .error-message {
+      background-color: var(--error);
+      color: white;
+    }
+    
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .form-section {
+        padding: 1rem;
+      }
+      
+      .form-actions {
+        flex-direction: column;
+      }
+      
+      .form-header h2 {
+        font-size: 1.3rem;
+      }
+      
+      .image-upload-wrapper {
+        padding: 1rem;
+        min-height: 100px;
+      }
+      
+      .image-upload-icon {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="form-section">
+      <div class="form-header">
+        <h2>Product Details</h2>
+        <p>Fill in the information below to add a new product</p>
+      </div>
+      
+      <div class="success-message" id="successMessage">
+        Product added successfully!
+      </div>
+      
+      <div class="error-message" id="errorMessage">
+        Please fill in all required fields.
+      </div>
+      
+      <form id="productForm">
+        <div class="form-group">
+          <label for="productName">Product Name *</label>
+          <input type="text" id="productName" name="productName" required placeholder="Enter product name">
+        </div>
+        
+        <div class="form-group">
+          <label for="productPrice">Price *</label>
+          <input type="number" id="productPrice" name="productPrice" step="0.01" required placeholder="0.00">
+        </div>
+        
+        <div class="form-group">
+          <label for="productCategory">Category *</label>
+          <select id="productCategory" name="productCategory" required>
+            <option value="">Select a category</option>
+            <option value="bags">Bags</option>
+            <option value="watches">Watches</option>
+            <option value="shirts">Shirts</option>
+            <option value="shoes">Shoes</option>
+            <option value="electronics">Electronics</option>
+            <option value="books">Books</option>
+            <option value="home">Home & Garden</option>
+            <option value="sports">Sports</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="productDescription">Description</label>
+          <textarea id="productDescription" name="productDescription" placeholder="Enter product description (optional)"></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label>Product Image</label>
+          <div class="image-upload-wrapper" id="imageUpload">
+            <input type="file" class="image-upload-input" id="imageInput" accept="image/*">
+            <div class="image-upload-content">
+              <div class="image-upload-text">Click to upload image</div>
+              <div class="image-upload-subtext">PNG, JPG, GIF up to 10MB</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            Add Product
+          </button>
+          <a href="products.html" class="btn btn-secondary">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 3h18v18H3zM9 9h6v6H9z"></path>
+            </svg>
+            View Products
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <script>
+    let selectedImage = null;
+    
+    // localStorage key for products
+    const PRODUCTS_STORAGE_KEY = 'productManagement_products';
+    
+    // LocalStorage Product Manager
+    class ProductManager {
+      constructor() {
+        this.initializeStorage();
+      }
+      
+      // Initialize localStorage with default products if empty
+      initializeStorage() {
+        const existingProducts = localStorage.getItem(PRODUCTS_STORAGE_KEY);
+        
+        if (!existingProducts) {
+          const defaultProducts = [
+            {
+              id: 1,
+              name: "Nike",
+              description: "Sporty, performance-driven or lifestyle-focused kicks, known for innovative tech and iconic silhouettes.",
+              price: 89.99,
+              category: "shoes",
+              image: "shoes/Nike.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 2,
+              name: "Louboutin",
+              description: "Luxury kicks with bold designs, signature red soles, and premium materials like patent leather or spikes—elevating high-fashion street style.",
+              price: 199.99,
+              category: "shoes",
+              image: "shoes/Loboutin.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 3,
+              name: "Samba",
+              description: "The classic sneaker with soft leather, a gum sole, and timeless red/white styling—ideal for casual wear or streetwear.",
+              price: 129.99,
+              category: "shoes",
+              image: "shoes/Samba.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 4,
+              name: "Hermes Berkin",
+              description: "The Red Hermès Birkin is a luxurious, ultra-exclusive handbag in a bold red shade, crafted from premium leather or exotic skins. Known for its timeless design and high status, it's a symbol of wealth",
+              price: 10000,
+              category: "bags",
+              image: "bags/Hermes Berkin.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 5,
+              name: "Coach",
+              description: "The Brown Coach Bag is a classic, versatile accessory crafted from durable leather with signature detailing like turn-lock closures or bold hardware. Timeless, practical, and effortlessly stylish.",
+              price: 75,
+              category: "bags",
+              image: "bags/Coach.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 6,
+              name: "Prada",
+              description: "The White Prada Bag is a sleek, modern accessory, crafted from premium leather or nylon. Known for its minimalist design and iconic triangle logo, it combines elegance which is perfect for casual or elevated looks.",
+              price: 700,
+              category: "bags",
+              image: "bags/Prada.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 7,
+              name: "Ralph Lauren",
+              description: "Classic American sophistication with a preppy twist, featuring clean lines, tailored fits, and timeless neutral tones.",
+              price: 27,
+              category: "shirts",
+              image: "shirts/Ralph Lauren.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 8,
+              name: "Burberry Trench Coat",
+              description: "The iconic British heritage piece, crafted from gabardine, with luxury and timeless elegance.",
+              price: 157,
+              category: "shirts",
+              image: "shirts/Burberry Trench Coat.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 9,
+              name: "Tommy Hilfiger",
+              description: "Sporty-meets-preppy style, often with bold branding, relaxed silhouettes, and a fresh, all-American vibe.",
+              price: 23,
+              category: "shirts",
+              image: "shirts/Tommy Hilfiger.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 10,
+              name: "Cartier",
+              description: "Timeless elegance with iconic designs like the Tank and Santos, blending refined aesthetics with Swiss craftsmanship.",
+              price: 2700,
+              category: "watches",
+              image: "watches/Cartier.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 11,
+              name: "Bvlgari",
+              description: "Bold Italian luxury, known for architectural shapes (e.g., Octo) and high jewelry-inspired timepieces.",
+              price: 1570,
+              category: "watches",
+              image: "watches/bvlgari.jpg",
+              dateAdded: new Date().toISOString()
+            },
+            {
+              id: 12,
+              name: "Patek Philippe",
+              description: "The pinnacle of Swiss horology, crafting heirloom-quality watches with intricate complications.",
+              price: 25000,
+              category: "watches",
+              image: "watches/Patek Philippe.jpg",
+              dateAdded: new Date().toISOString()
+            }
+          ];
+          
+          localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(defaultProducts));
+        }
+      }
+      
+      // Get all products from localStorage
+      getProducts() {
+        try {
+          const products = localStorage.getItem(PRODUCTS_STORAGE_KEY);
+          return products ? JSON.parse(products) : [];
+        } catch (error) {
+          console.error('Error reading products from localStorage:', error);
+          return [];
+        }
+      }
+      
+      // Add a new product to localStorage
+      addProduct(productData) {
+        try {
+          const products = this.getProducts();
+          
+          // Create new product with unique ID
+          const newProduct = {
+            id: Date.now(), // Using timestamp as unique ID
+            ...productData,
+            dateAdded: new Date().toISOString()
+          };
+          
+          // Add to products array
+          products.push(newProduct);
+          
+          // Save back to localStorage
+          localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
+          
+          return newProduct;
+        } catch (error) {
+          console.error('Error adding product to localStorage:', error);
+          throw error;
+        }
+      }
+      
+      // Get product by ID
+      getProductById(id) {
+        const products = this.getProducts();
+        return products.find(product => product.id === id);
+      }
+      
+      // Update product
+      updateProduct(id, updates) {
+        try {
+          const products = this.getProducts();
+          const index = products.findIndex(product => product.id === id);
+          
+          if (index !== -1) {
+            products[index] = { ...products[index], ...updates };
+            localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
+            return products[index];
+          }
+          
+          return null;
+        } catch (error) {
+          console.error('Error updating product:', error);
+          throw error;
+        }
+      }
+      
+      // Delete product
+      deleteProduct(id) {
+        try {
+          const products = this.getProducts();
+          const filteredProducts = products.filter(product => product.id !== id);
+          
+          localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(filteredProducts));
+          
+          return true;
+        } catch (error) {
+          console.error('Error deleting product:', error);
+          return false;
+        }
+      }
+      
+      // Clear all products
+      clearAllProducts() {
+        try {
+          localStorage.removeItem(PRODUCTS_STORAGE_KEY);
+          return true;
+        } catch (error) {
+          console.error('Error clearing products:', error);
+          return false;
+        }
+      }
+      
+      // Get products count
+      getProductsCount() {
+        return this.getProducts().length;
+      }
+      
+      // Get products by category
+      getProductsByCategory(category) {
+        const products = this.getProducts();
+        return products.filter(product => product.category === category);
+      }
+    }
+    
+    // Initialize product manager
+    const productManager = new ProductManager();
+    
+    // Image upload functionality
+    function handleImageUpload() {
+      const input = document.getElementById('imageInput');
+      const wrapper = document.getElementById('imageUpload');
+      
+      input.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          // Validate file size (10MB limit)
+          if (file.size > 10 * 1024 * 1024) {
+            showMessage('error', 'Image size must be less than 10MB');
+            input.value = '';
+            return;
+          }
+          
+          // Validate file type
+          if (!file.type.startsWith('image/')) {
+            showMessage('error', 'Please select a valid image file');
+            input.value = '';
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            selectedImage = e.target.result;
+            
+            // Update wrapper with image preview
+            wrapper.classList.add('has-image');
+            wrapper.innerHTML = `
+              <img src="${selectedImage}" alt="Product image" class="image-preview">
+              <button type="button" class="image-remove-btn" onclick="removeImage()">×</button>
+              <input type="file" class="image-upload-input" id="imageInput" accept="image/*">
+            `;
+            
+            // Re-attach event listener
+            handleImageUpload();
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+    
+    function removeImage() {
+      const wrapper = document.getElementById('imageUpload');
+      selectedImage = null;
+      
+      wrapper.classList.remove('has-image');
+      wrapper.innerHTML = `
+        <input type="file" class="image-upload-input" id="imageInput" accept="image/*">
+        <div class="image-upload-content">
+          <div class="image-upload-text">Click to upload image</div>
+          <div class="image-upload-subtext">PNG, JPG, GIF up to 10MB</div>
+        </div>
+      `;
+      
+      // Re-attach event listener
+      handleImageUpload();
+    }
+    
+    function showMessage(type, message) {
+      const successMsg = document.getElementById('successMessage');
+      const errorMsg = document.getElementById('errorMessage');
+      
+      successMsg.style.display = 'none';
+      errorMsg.style.display = 'none';
+      
+      if (type === 'success') {
+        successMsg.textContent = message;
+        successMsg.style.display = 'block';
+        setTimeout(() => {
+          successMsg.style.display = 'none';
+        }, 3000);
+      } else {
+        errorMsg.textContent = message;
+        errorMsg.style.display = 'block';
+        setTimeout(() => {
+          errorMsg.style.display = 'none';
+        }, 3000);
+      }
+    }
+    
+    // Form submission handler using localStorage
+    document.getElementById('productForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const formData = new FormData(this);
+      const product = {
+        name: formData.get('productName').trim(),
+        price: parseFloat(formData.get('productPrice')),
+        category: formData.get('productCategory'),
+        description: formData.get('productDescription').trim(),
+        image: selectedImage || 'placeholder.jpg' // Fallback image if none selected
+      };
+      
+      // Validation
+      if (!product.name || !product.price || !product.category) {
+        showMessage('error', 'Please fill in all required fields.');
+        return;
+      }
+      
+      if (product.price <= 0) {
+        showMessage('error', 'Please enter a valid price greater than 0.');
+        return;
+      }
+      
+      try {
+        // Add product using ProductManager
+        const addedProduct = productManager.addProduct(product);
+        
+        // Fire custom event to notify other pages
+        window.dispatchEvent(new CustomEvent('productsUpdated', {
+          detail: {
+            action: 'add',
+            product: addedProduct,
+            totalProducts: productManager.getProductsCount()
+          }
+        }));
+        
+        showMessage('success', 'Product added successfully!');
+        
+        // Reset form
+        this.reset();
+        selectedImage = null;
+        
+        // Reset image upload area
+        removeImage();
+        
+        // Visual feedback
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"></path></svg> Added!';
+        submitBtn.style.backgroundColor = 'var(--success)';
+        
+        setTimeout(() => {
+          submitBtn.innerHTML = originalText;
+          submitBtn.style.backgroundColor = '';
+        }, 2000);
+        
+        console.log('Product added:', addedProduct);
+        console.log('Total products in storage:', productManager.getProductsCount());
+        
+      } catch (error) {
+        showMessage('error', 'Error adding product. Please try again.');
+        console.error('Error adding product:', error);
+      }
+    });
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      handleImageUpload();
+      
+      // Log current products for debugging
+      console.log('Products in localStorage:', productManager.getProducts().length);
+    });
+    
+    // Expose productManager globally for other scripts
+    window.ProductManager = productManager;
+  </script>
+</body>
+</html>

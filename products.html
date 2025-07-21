@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discover Products - Product Management</title>
+  <style>
+    :root {
+      --pale-mint: #FAF6E9;
+      --cream: #73946B;
+      --dark-gray: #5e8c6170;
+      --charcoal: #5e8c6119;
+      --success: #4CAF50;
+      --error: #f44336;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'RL_DroidKufi', 'LeJeuneDeck-Regular', 'Times New Roman', Times, serif;
+    }
+    
+    body {
+      background-color: #FAF6E9;
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background-color: rgba(250, 246, 233, 0.9);
+    }
+    
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+    }
+    
+    .logo {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--cream);
+      letter-spacing: 2px;
+    }
+    
+    .nav-menu {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-item {
+      color: var(--cream);
+      text-decoration: none;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .nav-item:hover {
+      color: #5E8C61;
+      transform: translateY(-2px);
+    }
+    
+    .nav-item::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--cream);
+      transition: width 0.3s ease;
+    }
+    
+    .nav-item:hover::after {
+      width: 100%;
+    }
+    
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      fill: var(--cream);
+    }
+    
+    .nav-icon:hover {
+      transform: scale(1.1);
+      fill: #5E8C61;
+    }
+    
+    .search-icon {
+      stroke: var(--cream);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    .search-icon:hover {
+      stroke: #5E8C61;
+    }
+    
+    .user-icon {
+      stroke: var(--cream);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    
+    .user-icon:hover {
+      stroke: #5E8C61;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 2rem 2rem;
+    }
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+    
+    .page-header h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--cream);
+      text-shadow: 0 0 15px rgba(13, 62, 23, 0.264);
+    }
+    
+    .page-header p {
+      font-size: 1.2rem;
+      color: var(--cream);
+      opacity: 0.8;
+    }
+    
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .filter-section {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .filter-select {
+      padding: 0.8rem 1rem;
+      border: 2px solid var(--charcoal);
+      border-radius: 8px;
+      background-color: rgba(250, 246, 233, 0.9);
+      color: var(--cream);
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--cream);
+    }
+    
+    .add-product-btn {
+      padding: 0.8rem 1.5rem;
+      background-color: var(--cream);
+      color: var(--pale-mint);
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 2px solid transparent;
+    }
+    
+    .add-product-btn:hover {
+      background-color: transparent;
+      color: var(--cream);
+      border: 2px solid var(--cream);
+      transform: translateY(-2px);
+    }
+    
+    /* grid layout for 4 items per row */
+    .products-grid {
+      width: 100%;
+      margin: 30px auto 50px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-gap: 30px;
+    }
+    
+    .product-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(83, 83, 84, 0.2);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(83, 83, 84, 0.3);
+    }
+    
+    /* image container */
+    .product-image {
+      width: 100%;
+      height: 250px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f8f9fa;
+    }
+    
+    .product-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    
+    .product-info {
+      padding: 20px;
+    }
+    
+    .product-name {
+      font-size: 18px;
+      font-weight: bold;
+      color: #73946B;
+      margin-bottom: 10px;
+    }
+    
+    .product-category {
+      font-size: 0.9rem;
+      color: #73946bc0;
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .product-price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #73946B;
+      margin-bottom: 15px;
+    }
+    
+    .product-description {
+      color: #73946bc0;
+      font-size: 14px;
+      margin-bottom: 15px;
+      line-height: 1.4;
+    }
+    
+    .product-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    
+    .btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+    }
+    
+    .btn-edit {
+      background: #FAF6E9;
+      border: 2px solid #73946b1f;
+    }
+    
+    .btn-edit:hover {
+      background: #73946B;
+      transform: scale(1.1);
+    }
+    
+    .btn-delete {
+      background: #FAF6E9;
+      border: 2px solid #73946b34;
+    }
+    
+    .btn-delete:hover {
+      background: #73946B;
+      transform: scale(1.1);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--cream);
+      opacity: 0.7;
+      grid-column: 1 / -1;
+    }
+    
+    .empty-state h2 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+    
+    .empty-state p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+    
+    .floating-elements {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+    
+    .floating-element {
+      position: absolute;
+      background-color: var(--charcoal);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: float 20s infinite linear;
+    }
+    
+    @keyframes float {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+      }
+      100% {
+        transform: translateY(-100px) rotate(360deg);
+      }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 1200px) {
+      .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 5rem 1rem 2rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2.2rem;
+      }
+      
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .filter-section {
+        justify-content: center;
+      }
+      
+      .products-grid {
+        width: 95%;
+        grid-template-columns: repeat(2, 1fr);
+        grid-gap: 20px;
+      }
+      
+      .nav-menu {
+        display: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="nav-left">
+      <div class="logo">xyz</div>
+      <ul class="nav-menu">
+        <li><a href="shoes.html" class="nav-item">Shoes</a></li>
+        <li><a href="bags.html" class="nav-item">Bags</a></li>
+        <li><a href="watches.html" class="nav-item">Watches</a></li>
+        <li><a href="shirts.html" class="nav-item">Shirts</a></li>
+        <li><a href="products.html" class="nav-item">Discover</a></li>
+      </ul>
+    </div>
+    
+    <div class="nav-right">
+      <svg class="nav-icon search-icon" viewBox="0 0 24 24">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      
+      <svg class="nav-icon user-icon" viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+    </div>
+  </nav>
+  
+  <div class="container">
+    <div class="page-header">
+      <h1>Discover Products</h1>
+      <p>Explore our collection of amazing products</p>
+    </div>
+    
+    <div class="controls">
+      <div class="filter-section">
+        <select class="filter-select" id="categoryFilter">
+          <option value="">All Categories</option>
+          <option value="bags">Bags</option>
+          <option value="watches">Watches</option>
+          <option value="shirts">Shirts</option>
+          <option value="shoes">Shoes</option>
+          <option value="electronics">Electronics</option>
+          <option value="books">Books</option>
+          <option value="home">Home & Garden</option>
+          <option value="sports">Sports</option>
+          <option value="other">Other</option>
+        </select>
+        
+        <select class="filter-select" id="sortFilter">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+          <option value="name-az">Name: A to Z</option>
+          <option value="name-za">Name: Z to A</option>
+        </select>
+      </div>
+      
+      <a href="form.html" class="add-product-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Product
+      </a>
+    </div>
+    
+    <div class="products-grid" id="productsGrid">
+      <!-- Products will be loaded here -->
+    </div>
+    
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <h2>No Products Found</h2>
+      <p>Start building your inventory by adding your first product!</p>
+      <a href="form.html" class="add-product-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        Add Your First Product
+      </a>
+    </div>
+  </div>
+  
+  <div class="floating-elements" id="floatingElements"></div>
+  
+  <script>
+    // Enhanced Global Product Storage System
+    class ProductStorage {
+      static KEY = 'productManagement_products';
+      static nextId = 1;
+      
+      // Get all products
+      static getProducts() {
+      try {
+    const stored = localStorage.getItem(this.KEY);
+    if (stored) {
+    return JSON.parse(stored);
+   }
+  } catch (error) {
+  console.error('Error loading products:', error);
+    }
+  // If no stored data or error, return default products
+  const defaultProducts = this.getDefaultProducts();
+  this.setProducts(defaultProducts);
+  return defaultProducts;
+      }
+      
+      // Set products
+      static setProducts(products) {
+        try {
+  localStorage.setItem(this.KEY, JSON.stringify(products));
+} catch (error) {
+  console.error('Error saving products:', error);
+}
+        // Update nextId based on existing products
+        if (products.length > 0) {
+          this.nextId = Math.max(...products.map(p => p.id || 0)) + 1;
+        }
+      }
+      
+      // Add new product
+      static addProduct(product) {
+        const products = this.getProducts();
+        const newProduct = {
+          ...product,
+          id: this.nextId++,
+          dateAdded: new Date().toISOString().split('T')[0]
+        };
+        products.push(newProduct);
+        this.setProducts(products);
+        return newProduct;
+      }
+      
+      // Delete product
+      static deleteProduct(productId) {
+        const products = this.getProducts();
+        const filteredProducts = products.filter(product => product.id !== productId);
+        this.setProducts(filteredProducts);
+        return filteredProducts;
+      }
+      
+      // Update product
+      static updateProduct(productId, updatedData) {
+        const products = this.getProducts();
+        const index = products.findIndex(product => product.id === productId);
+        if (index !== -1) {
+          products[index] = { ...products[index], ...updatedData };
+          this.setProducts(products);
+          return products[index];
+        }
+        return null;
+      }
+      
+      // Get product by ID
+      static getProductById(productId) {
+        const products = this.getProducts();
+        return products.find(product => product.id === productId);
+      }
+      
+      // Default products for demo
+      static getDefaultProducts() {
+        return [
+          {
+            id: 1,
+            name: "Nike",
+            category: "shoes",
+            description: "Sporty, performance-driven or lifestyle-focused kicks, known for innovative tech and iconic silhouettes.",
+            price: 150,
+            image: "1.jpg",
+            dateAdded: "2024-01-15"
+          },
+          {
+            id: 2,
+            name: "Louboutin",
+            category: "shoes",
+            description: "Luxury kicks with bold designs, signature red soles, and premium materials like patent leather or spikes—elevating high-fashion street style.",
+            price: 995,
+            image: "2.jpg",
+            dateAdded: "2024-01-16"
+          },
+          {
+            id: 3,
+            name: "Samba",
+            category: "shoes",
+            description: "The classic sneaker with soft leather, a gum sole, and timeless red/white styling—ideal for casual wear or streetwear.",
+            price: 120,
+            image: "3.jpg",
+            dateAdded: "2024-01-17"
+          },
+          {
+            id: 4,
+            name: "Hermes Birkin",
+            category: "bags",
+            description: "The Red Hermès Birkin is a luxurious, ultra-exclusive handbag in a bold red shade, crafted from premium leather or exotic skins. Known for its timeless design and high status, it's a symbol of wealth",
+            price: 10000,
+            image: "4.jpg",
+            dateAdded: "2024-01-18"
+          },
+          {
+            id: 5,
+            name: "Coach",
+            category: "bags",
+            description: "The Brown Coach Bag is a classic, versatile accessory crafted from durable leather with signature detailing like turn-lock closures or bold hardware. Timeless, practical, and effortlessly stylish.",
+            price: 220,
+            image: "5.jpg",
+            dateAdded: "2024-01-19"
+          },
+          {
+            id: 6,
+            name: "Prada",
+            category: "bags",
+            description: "The White Prada Bag is a sleek, modern accessory, crafted from premium leather or nylon. Known for its minimalist design and iconic triangle logo, it combines elegance which is perfect for casual or elevated looks.",
+            price: 2000,
+            image: "6.jpg",
+            dateAdded: "2024-01-20"
+          },
+          {
+            id: 7,
+            name: "Ralph Lauren",
+            category: "shirts",
+            description: "Classic American sophistication with a preppy twist, featuring clean lines, tailored fits, and timeless neutral tones.",
+            price: 57,
+            image: "7.jpg",
+            dateAdded: "2024-01-21"
+          },
+          {
+            id: 8,
+            name: "Burberry Trench Coat",
+            category: "shirts",
+            description: "The iconic British heritage piece, crafted from gabardine, with luxury and timeless elegance.",
+            price: 3150,
+            image: "8.jpg",
+            dateAdded: "2024-01-22"
+          },
+          {
+            id: 9,
+            name: "Tommy Hilfiger",
+            category: "shirts",
+            description: "Sporty-meets-preppy style, often with bold branding, relaxed silhouettes, and a fresh, all-American vibe.",
+            price: 84,
+            image: "9.jpg",
+            dateAdded: "2024-01-23"
+          },
+          {
+            id: 10,
+            name: "Cartier",
+            category: "watches",
+            description: "Timeless elegance with iconic designs like the Tank and Santos, blending refined aesthetics with Swiss craftsmanship.",
+            price: 6000,
+            image: "10.jpg",
+            dateAdded: "2024-01-24"
+          },
+          {
+            id: 11,
+            name: "Bvlgari",
+            category: "watches",
+            description: "Bold Italian luxury, known for architectural shapes (e.g., Octo) and high jewelry-inspired timepieces.",
+            price: 13000,
+            image: "11.jpg",
+            dateAdded: "2024-01-25"
+          },
+          {
+            id: 12,
+            name: "Patek Philippe",
+            category: "watches",
+            description: "The pinnacle of Swiss horology, crafting heirloom-quality watches with intricate complications.",
+            price: 14000,
+            image: "12.jpg",
+            dateAdded: "2024-01-26"
+          }
+        ];
+      }
+    }
+    
+    // storage class globally available
+    window.ProductStorage = ProductStorage;
+    
+    // Legacy compatibility - keep window.products for backward compatibility
+    Object.defineProperty(window, 'products', {
+      get() {
+        return ProductStorage.getProducts();
+      },
+      set(value) {
+        ProductStorage.setProducts(value);
+      }
+    });
+    
+    // Initialize floating elements
+    function createFloatingElements() {
+      const container = document.getElementById('floatingElements');
+      const numElements = 8;
+      
+      for (let i = 0; i < numElements; i++) {
+        const element = document.createElement('div');
+        element.className = 'floating-element';
+        
+        const size = Math.random() * 20 + 10;
+        const startX = Math.random() * window.innerWidth;
+        const delay = Math.random() * 20;
+        
+        element.style.width = size + 'px';
+        element.style.height = size + 'px';
+        element.style.left = startX + 'px';
+        element.style.animationDelay = delay + 's';
+        
+        container.appendChild(element);
+      }
+    }
+    
+    // Delete product
+    function deleteProduct(productId) {
+      if (confirm('Are you sure you want to delete this product?')) {
+        ProductStorage.deleteProduct(productId);
+        renderProducts();
+      }
+    }
+    
+    // Render products
+    function renderProducts() {
+      const productsGrid = document.getElementById('productsGrid');
+      const emptyState = document.getElementById('emptyState');
+      const products = ProductStorage.getProducts();
+      
+      // Apply filters
+      const categoryFilter = document.getElementById('categoryFilter').value;
+      const sortFilter = document.getElementById('sortFilter').value;
+      
+      let filteredProducts = [...products];
+      
+      // Category filter
+      if (categoryFilter) {
+        filteredProducts = filteredProducts.filter(product => product.category === categoryFilter);
+      }
+      
+      // Sort products
+      switch (sortFilter) {
+        case 'newest':
+          filteredProducts.sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+          break;
+        case 'oldest':
+          filteredProducts.sort((a, b) => new Date(a.dateAdded) - new Date(b.dateAdded));
+          break;
+        case 'price-low':
+          filteredProducts.sort((a, b) => a.price - b.price);
+          break;
+        case 'price-high':
+          filteredProducts.sort((a, b) => b.price - a.price);
+          break;
+        case 'name-az':
+          filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name-za':
+          filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+      }
+      
+      if (filteredProducts.length === 0) {
+        productsGrid.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      productsGrid.innerHTML = filteredProducts.map(product => `
+        <div class="product-card">
+          <div class="product-image">
+            ${product.image 
+              ? `<img src="${product.image}" alt="${product.name}" onerror="this.parentElement.innerHTML='<div style=\\'padding: 20px; text-align: center; color: #999;\\'>Image Not Available</div>'">` 
+              : '<div style="padding: 20px; text-align: center; color: #999;">No Image Available</div>'
+            }
+          </div>
+          <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-category">${product.category || 'Uncategorized'}</div>
+            <div class="product-description">${product.description || ''}</div>
+            <div class="product-price">$${Number(product.price || 0).toFixed(2)}</div>
+            <div class="product-actions">
+              <button class="btn btn-edit" onclick="editProduct(${product.id})" title="Edit Product">
+                ✏️
+              </button>
+              <button class="btn btn-delete" onclick="deleteProduct(${product.id})" title="Delete Product">
+                ❌
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Edit product
+    function editProduct(productId) {
+      window.location.href = `form.html?edit=${productId}`;
+    }
+    
+    // Listen for storage events (when products are updated in other tabs/windows)
+    window.addEventListener('storage', function(e) {
+      if (e.key === ProductStorage.KEY) {
+        renderProducts();
+      }
+    });
+    
+    // Listen for custom events (for same-window updates)
+    window.addEventListener('productsUpdated', function() {
+      renderProducts();
+    });
+    
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      createFloatingElements();
+      renderProducts();
+      
+      // Add event listeners for filters
+      document.getElementById('categoryFilter').addEventListener('change', renderProducts);
+      document.getElementById('sortFilter').addEventListener('change', renderProducts);
+    });
+    
+    // Handle window resize for floating elements
+    window.addEventListener('resize', function() {
+      document.getElementById('floatingElements').innerHTML = '';
+      createFloatingElements();
+    });
+    
+    // Refresh products when page becomes visible (handles browser back/forward)
+    document.addEventListener('visibilitychange', function() {
+      if (!document.hidden) {
+        renderProducts();
+      }
+    });
+    
+    // Refresh products when window gains focus
+    window.addEventListener('focus', function() {
+      renderProducts();
+    });
+  </script>
+</body>
+</html>
